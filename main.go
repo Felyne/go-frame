@@ -8,15 +8,20 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
+var (
+	mongoAddr = "localhost"
+	dbName    = "test"
+)
+
 func main() {
-	session, err := mgo.Dial("localhost")
+	session, err := mgo.Dial(mongoAddr)
 	if err != nil {
 		panic(err)
 	}
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
 
-	appC := appContext{session.DB("test")}
+	appC := appContext{session.DB(dbName)}
 	commonHandlers := alice.New(context.ClearHandler, loggingHandler, recoverHandler, acceptHandler)
 	router := NewRouter()
 	router.Get("/teas/:id", commonHandlers.ThenFunc(appC.teaHandler))
