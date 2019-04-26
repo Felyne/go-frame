@@ -12,12 +12,14 @@ import (
 
 // Main handlers
 
+var teasCollName = "teas"
+
 type appContext struct {
 	db *mgo.Database
 }
 
 func (c *appContext) teasHandler(w http.ResponseWriter, r *http.Request) {
-	repo := TeaRepo{c.db.C("teas")}
+	repo := TeaRepo{c.db.C(teasCollName)}
 	teas, err := repo.All()
 	if err != nil {
 		panic(err)
@@ -29,7 +31,7 @@ func (c *appContext) teasHandler(w http.ResponseWriter, r *http.Request) {
 
 func (c *appContext) teaHandler(w http.ResponseWriter, r *http.Request) {
 	params := context.Get(r, "params").(httprouter.Params)
-	repo := TeaRepo{c.db.C("teas")}
+	repo := TeaRepo{c.db.C(teasCollName)}
 	tea, err := repo.Find(params.ByName("id"))
 	if err != nil {
 		panic(err)
@@ -41,7 +43,7 @@ func (c *appContext) teaHandler(w http.ResponseWriter, r *http.Request) {
 
 func (c *appContext) createTeaHandler(w http.ResponseWriter, r *http.Request) {
 	body := context.Get(r, "body").(*TeaResource)
-	repo := TeaRepo{c.db.C("teas")}
+	repo := TeaRepo{c.db.C(teasCollName)}
 	err := repo.Create(&body.Data)
 	if err != nil {
 		panic(err)
@@ -56,7 +58,7 @@ func (c *appContext) updateTeaHandler(w http.ResponseWriter, r *http.Request) {
 	params := context.Get(r, "params").(httprouter.Params)
 	body := context.Get(r, "body").(*TeaResource)
 	body.Data.Id = bson.ObjectIdHex(params.ByName("id"))
-	repo := TeaRepo{c.db.C("teas")}
+	repo := TeaRepo{c.db.C(teasCollName)}
 	err := repo.Update(&body.Data)
 	if err != nil {
 		panic(err)
@@ -68,7 +70,7 @@ func (c *appContext) updateTeaHandler(w http.ResponseWriter, r *http.Request) {
 
 func (c *appContext) deleteTeaHandler(w http.ResponseWriter, r *http.Request) {
 	params := context.Get(r, "params").(httprouter.Params)
-	repo := TeaRepo{c.db.C("teas")}
+	repo := TeaRepo{c.db.C(teasCollName)}
 	err := repo.Delete(params.ByName("id"))
 	if err != nil {
 		panic(err)
