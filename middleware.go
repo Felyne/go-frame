@@ -93,7 +93,7 @@ func contentTypeHandler(next http.Handler) http.Handler {
 func bodyHandler(v interface{}) func(http.Handler) http.Handler {
 	t := reflect.TypeOf(v)
 
-	m := func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			val := reflect.New(t).Interface()
 			err := json.NewDecoder(r.Body).Decode(val)
@@ -111,6 +111,4 @@ func bodyHandler(v interface{}) func(http.Handler) http.Handler {
 
 		return http.HandlerFunc(fn)
 	}
-
-	return m
 }
